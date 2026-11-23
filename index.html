@@ -1009,11 +1009,11 @@
             <div class="hint">ค่าพื้นฐานที่จะใช้เติมในปกซองข้อสอบทุกใบ (แก้ไขเฉพาะจุดได้อีกครั้งตอนสร้างปก)</div>
             <div class="row">
               <label>ภาคเรียนที่</label>
-              <select id="s_semester"><option value="1">1</option><option value="2">2</option></select>
+              <select id="s_semester"><option value="1">1</option><option value="2" selected>2</option></select>
               <label>ปีการศึกษา (พ.ศ.)</label>
-              <input type="text" id="s_year" placeholder="เช่น 2569" style="width:100px">
+              <input type="text" id="s_year" value="2569" placeholder="เช่น 2569" style="width:100px">
               <label>ประเภทการสอบ</label>
-              <select id="s_examtype"><option value="กลางภาค">กลางภาค</option><option value="ปลายภาค">ปลายภาค</option></select>
+              <select id="s_examtype"><option value="กลางภาค" selected>กลางภาค</option><option value="ปลายภาค">ปลายภาค</option></select>
             </div>
             <div class="row">
               <label>ระดับชั้นในระบบ (คั่นด้วย , )</label>
@@ -1241,9 +1241,11 @@ const DEFAULT_INVIGILATORS = [
     "ว่าที่ รต.หญิงกาญจนา ไกรรุ่ง"
 ];
 
+const DEFAULT_SETTINGS = {semester:"2", year:"2569", examtype:"กลางภาค", levels:"1/1,1/2,1/3,1/4,1/5,1/6,1/7,1/8,1/9,1/10,1/11,1/12,1/13,1/14,1/15,2/1,2/2,2/3,2/4,2/5,2/6,2/7,2/8,2/9,2/10,2/11,2/12,2/13,2/14,2/15,3/1,3/2,3/3,3/4,3/5,3/6,3/7,3/8,3/9,3/10,3/11,3/12,3/13,3/14,3/15,4/1,4/2,4/3,4/4,4/5,4/6,4/7,4/8,4/9,5/1,5/2,5/3,5/4,5/5,5/6,5/7,5/8,5/9,6/1,6/2,6/3,6/4,6/5,6/6,6/7,6/8,6/9"};
+
 // ---------- state ----------
 let state = {
-  settings: {semester:"2", year:"2569", examtype:"กลางภาค", levels:"1/1,1/2,1/3,1/4,1/5,1/6,1/7,1/8,1/9,1/10,1/11,1/12,1/13,1/14,1/15,2/1,2/2,2/3,2/4,2/5,2/6,2/7,2/8,2/9,2/10,2/11,2/12,2/13,2/14,2/15,3/1,3/2,3/3,3/4,3/5,3/6,3/7,3/8,3/9,3/10,3/11,3/12,3/13,3/14,3/15,4/1,4/2,4/3,4/4,4/5,4/6,4/7,4/8,4/9,5/1,5/2,5/3,5/4,5/5,5/6,5/7,5/8,5/9,6/1,6/2,6/3,6/4,6/5,6/6,6/7,6/8,6/9"},
+  settings: Object.assign({}, DEFAULT_SETTINGS),
   rooms: [
     {"no":"1","roomNo":"313","level":"1/1","start":"1","end":"29","total":"29"},
     {"no":"2","roomNo":"311","level":"1/2","start":"1","end":"39","total":"39"},
@@ -1454,6 +1456,10 @@ function load(){
       save();
     }
   }catch(e){}
+  state.settings = Object.assign({}, DEFAULT_SETTINGS, state.settings || {});
+  if(!state.settings.semester) state.settings.semester = DEFAULT_SETTINGS.semester;
+  if(!state.settings.year) state.settings.year = DEFAULT_SETTINGS.year;
+  if(!state.settings.examtype) state.settings.examtype = DEFAULT_SETTINGS.examtype;
   // ถ้ายังไม่มีรายชื่อกรรมการคุมสอบ (ติดตั้งครั้งแรก หรือเคยบันทึกเป็นค่าว่างไว้ก่อนหน้านี้)
   // ให้เติมรายชื่อจากคำสั่งแต่งตั้งฯ ในโฟลเดอร์ "คณะกรรมการคุมสอบ" ให้อัตโนมัติ
   if(!Array.isArray(state.invigilators) || state.invigilators.length === 0){
@@ -1671,18 +1677,33 @@ if(btnRefreshApp) {
 
 
 // ---------- settings ----------
+function updateTermBadges(){
+  const cfg = state.settings || DEFAULT_SETTINGS;
+  const sem = cfg.semester || DEFAULT_SETTINGS.semester;
+  const yr = cfg.year || DEFAULT_SETTINGS.year;
+  const ex = cfg.examtype || DEFAULT_SETTINGS.examtype;
+  const statusEl = document.querySelector(".header-center .status-text");
+  if(statusEl) statusEl.textContent = "ภาคเรียนที่ " + sem + "/" + yr + " • สอบ" + ex;
+  const printBadge = document.querySelector("#tab-print .panel h2 .badge");
+  if(printBadge) printBadge.textContent = "ภาคเรียนที่ " + sem + "/" + yr;
+  const footerTag = document.querySelector(".footer-tag");
+  if(footerTag) footerTag.textContent = "ระบบปกซองข้อสอบ " + sem + "/" + yr;
+}
 function renderSettings(){
-  document.getElementById("s_semester").value = state.settings.semester || "1";
-  document.getElementById("s_year").value = state.settings.year || "";
-  document.getElementById("s_examtype").value = state.settings.examtype || "กลางภาค";
-  document.getElementById("s_levels").value = state.settings.levels || "";
+  const cfg = state.settings || DEFAULT_SETTINGS;
+  document.getElementById("s_semester").value = cfg.semester || DEFAULT_SETTINGS.semester;
+  document.getElementById("s_year").value = cfg.year || DEFAULT_SETTINGS.year;
+  document.getElementById("s_examtype").value = cfg.examtype || DEFAULT_SETTINGS.examtype;
+  document.getElementById("s_levels").value = cfg.levels || DEFAULT_SETTINGS.levels;
+  updateTermBadges();
 }
 document.getElementById("btnSaveSettings").addEventListener("click", function(){
-  state.settings.semester = document.getElementById("s_semester").value;
-  state.settings.year = document.getElementById("s_year").value.trim();
-  state.settings.examtype = document.getElementById("s_examtype").value;
+  state.settings.semester = document.getElementById("s_semester").value || DEFAULT_SETTINGS.semester;
+  state.settings.year = document.getElementById("s_year").value.trim() || DEFAULT_SETTINGS.year;
+  state.settings.examtype = document.getElementById("s_examtype").value || DEFAULT_SETTINGS.examtype;
   state.settings.levels = document.getElementById("s_levels").value.trim();
   save();
+  updateTermBadges();
   const badge = document.getElementById("settingsSaved");
   badge.style.display="inline-block";
   setTimeout(function(){ badge.style.display="none"; }, 1500);
