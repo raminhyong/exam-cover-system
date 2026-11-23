@@ -786,30 +786,101 @@
   /* @media print - Absolute Protection for Real Output */
   @media print {
     @page { size: A4; margin: 0; }
-    body { background: transparent !important; padding: 0 !important; }
-    body * { visibility: hidden; }
+    html, body {
+      display: block !important;
+      height: auto !important;
+      min-height: 0 !important;
+      background: transparent !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      overflow: visible !important;
+    }
     .app-viewport-16-9 {
+      display: block !important;
       width: 100% !important;
       height: auto !important;
       max-width: none !important;
       aspect-ratio: auto !important;
+      overflow: visible !important;
       border: none !important;
       box-shadow: none !important;
       border-radius: 0 !important;
+      background: transparent !important;
     }
-    header.app, nav.tabs, footer.app-footer { display: none !important; }
-    
-    body.printing-covers #printArea, body.printing-covers #printArea * { visibility: visible; }
-    body.printing-covers #printAreaAtnai, body.printing-covers #printAreaAtnai * { visibility: hidden; }
-    #printArea { position: absolute; left: 0; top: 0; width: 100%; }
-    .cover { box-shadow: none; page-break-after: always; margin: 0; width: 210mm; height: 297mm; transform: scale(0.96); transform-origin: top center; }
-    .coverlist { gap: 0; }
+    main.app-main {
+      display: block !important;
+      flex: none !important;
+      overflow: visible !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      background: transparent !important;
+    }
+    header.app, nav.tabs, footer.app-footer,
+    .preview-header, #noDataMsg, #atnaiNoDataMsg {
+      display: none !important;
+    }
+    .panel {
+      border: none !important;
+      box-shadow: none !important;
+      background: transparent !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+    }
 
-    body.printing-atnai #printArea, body.printing-atnai #printArea * { visibility: hidden; }
-    body.printing-atnai #printAreaAtnai, body.printing-atnai #printAreaAtnai * { visibility: visible; }
-    #printAreaAtnai { position: absolute; left: 0; top: 0; width: 100%; }
-    .atnai-cover { box-shadow: none; margin: 0; transform: scale(0.96); transform-origin: top center; }
-    .atnai-coverlist { gap: 8mm; }
+    body.printing-covers #tab-atnai,
+    body.printing-covers #tab-admin,
+    body.printing-covers #tab-print > .panel:first-child {
+      display: none !important;
+    }
+    body.printing-covers #printArea {
+      position: static !important;
+      display: block !important;
+      width: 100% !important;
+      margin: 0 !important;
+    }
+    .cover {
+      box-shadow: none;
+      border-radius: 0;
+      page-break-after: always;
+      break-after: page;
+      page-break-inside: avoid;
+      break-inside: avoid;
+      margin: 0 auto;
+      width: 210mm;
+      height: 297mm;
+      transform: scale(0.96);
+      transform-origin: top center;
+    }
+    .cover:last-child {
+      page-break-after: auto;
+      break-after: auto;
+    }
+    .coverlist { display: block !important; gap: 0; margin: 0; }
+
+    body.printing-atnai #tab-print,
+    body.printing-atnai #tab-admin,
+    body.printing-atnai #tab-atnai > .panel:first-child {
+      display: none !important;
+    }
+    body.printing-atnai #printAreaAtnai {
+      position: static !important;
+      display: block !important;
+      width: 100% !important;
+      margin: 0 !important;
+    }
+    .atnai-cover {
+      box-shadow: none;
+      margin: 0 auto 8mm;
+      transform: scale(0.96);
+      transform-origin: top center;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .atnai-cover:last-child {
+      margin-bottom: 0;
+    }
+    .atnai-coverlist { display: block !important; gap: 0; margin: 0; }
   }
 </style>
 </head>
